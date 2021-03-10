@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Gazetteer</title>
+    <meta name="description" content="A mobile-first website utilising AJAX, PHP, cURL, JSON and third-party API's to provide a variety of information on different countries and cities.">
+    <meta name="author" content="Laurie Nicholl">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="libs/css/styles.css">
+
+    <!-- Leaflet + EasyButton + Font Awesome + Bootstrap CSS -->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin=""/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="loader"></div>
+
+    <!-- nav -->
+
+    <nav class="navbar fixed-top navbar-expand-mr navbar-light bg-light">
+      <span class="navbar-brand">GAZETTEER</span>
+      <select name="select" id="select">
+        <option selected>Pick a country...</option>
+      </select>
+    </nav>
+
+    <!-- covid modal -->
+
+    <div class="modal" tabindex="-1" id="covid">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">COVID-19 information for <span class="countryName"></span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/total-cases.png"></th>
+                  <td class="bold">Total confirmed</td>
+                  <td><span id="confirmed"></span></td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/deaths.png"></th>
+                  <td class="bold">Deaths</td>
+                  <td><span id="deaths"></span></td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/recoveries.png"></th>
+                  <td class="bold">Recovered</td>
+                  <td><span id="recovered"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- currency modal -->
+
+    <div class="modal" tabindex="-1" id="currency">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Currency conversion for <span class="countryName"></span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <td>1 <span id="baseCurrency"></span> is equal to</td>
+                  <td scope="row" class="centered">
+                    <select name="selectRate" id="selectRate">
+                      <option selected>Pick a currency</option>
+                    </select>
+                    <span id="conversion"></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- image gallery modal -->
+
+    <div class="modal" tabindex="-1" id="imageGallery">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Images of <span class="countryName"></span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <th scope="row" class="centered"><img id="imageGallery1"></th>
+                  <td><img id="imageGallery2"></td>
+                  <td><img id="imageGallery3"></td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img id="imageGallery4"></th>
+                  <td><img id="imageGallery5"></td>
+                  <td><img id="imageGallery6"></td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img id="imageGallery7"></th>
+                  <td><img id="imageGallery8"></td>
+                  <td><img id="imageGallery9"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- news modal -->
+
+    <div class="modal" tabindex="-1" id="countryNews">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Latest news in <span class="countryName"></span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <th colspan="2" class="centered"><span id="countryNewsTitle1"></span></td>
+                </tr>
+                <tr>
+                  <td class="centered"><img id="countryNewsImg1"></th>
+                  <td><span id="countryNews1"></span><a id="countryNewsUrl1" target="_blank"> Read more</a></td>
+                </tr>
+                <tr>
+                  <th colspan="2" class="centered"><span id="countryNewsTitle2"></span></td>
+                </tr>
+                <tr>
+                  <td class="centered"><img id="countryNewsImg2"></th>
+                  <td><span id="countryNews2"></span><a id="countryNewsUrl2" target="_blank"> Read more</a></td>
+                </tr>
+                <tr>
+                  <th colspan="2" class="centered"><span id="countryNewsTitle3"></span></td>
+                </tr>
+                <tr>
+                  <td class="centered"><img id="countryNewsImg3"></th>
+                  <td><span id="countryNews3"></span><a id="countryNewsUrl3" target="_blank"> Read more</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- weather modal -->
+
+    <div class="modal" tabindex="-1" id="weather">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Weather in <span class="cityName"></span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/temperature.png"></th>
+                  <td class="bold">Temperature</td>
+                  <td><span id="temperature"></span>&deg;C</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/humidity.png"></th>
+                  <td class="bold">Humidity</td>
+                  <td><span id="humidity"></span>%</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/pressure.png"></th>
+                  <td class="bold">Pressure</td>
+                  <td><span id="pressure"></span>hPa</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/wind.png"></th>
+                  <td class="bold">Wind speed</td>
+                  <td><span id="wind"></span>m/s</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/sun.png"></th>
+                  <td class="bold">Sunrise / set</td>
+                  <td><span id="sunriseSet"></span></td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img id="weatherIcon"></th>
+                  <td class="bold">Description</td>
+                  <td><span id="description"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- wikipedia modal -->
+
+    <div class="modal" tabindex="-1" id="wiki">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Wikipedia entries about <span class="cityName"></span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <th scope="row" class="centered" id="cityWikiTitle1"></th>
+                </tr>
+                <tr>
+                  <td scope="row"><span id="cityWiki1"></span><br><a id="cityWikiUrl1" target="_blank">Read more</a></td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered" id="cityWikiTitle2"></th>
+                </tr>
+                <tr>
+                  <td scope="row"><span id="cityWiki2"></span><br><a id="cityWikiUrl2" target="_blank">Read more</a></td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered" id="cityWikiTitle3"></th>
+                </tr>
+                <tr>
+                  <td scope="row"><span id="cityWiki3"></span><br><a id="cityWikiUrl3" target="_blank">Read more</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- current location modal -->
+
+    <div class="modal" tabindex="-1" id="currentLocation">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Information about <span class="cityName"></span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/temperature.png"></th>
+                  <td class="bold">Temperature</td>
+                  <td><span id="currentTemperature"></span>&deg;C</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/humidity.png"></th>
+                  <td class="bold">Humidity</td>
+                  <td><span id="currentHumidity"></span>%</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/pressure.png"></th>
+                  <td class="bold">Pressure</td>
+                  <td><span id="currentPressure"></span>hPa</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/wind.png"></th>
+                  <td class="bold">Wind speed</td>
+                  <td><span id="currentWind"></span>m/s</td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img src="libs/images/sun.png"></th>
+                  <td class="bold">Sunrise / set</td>
+                  <td><span id="currentSunriseSet"></span></td>
+                </tr>
+                <tr>
+                  <th scope="row" class="centered"><img id="currentWeatherIcon"></th>
+                  <td class="bold">Description</td>
+                  <td><span id="currentDescription"></span></td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <th colspan="3" class="centered">Local Wikipedia entry</th>
+                </tr>
+                <tr>
+                  <td colspan="2"><span id="currentWiki"></span><a id="currentWikiUrl" target="_blank"><br>Read more</a></td>
+                  <td><img id="currentImage"></td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="table table-striped">
+              <tbody>
+                <th colspan="3" class="centered">COVID-19 information for <span id="currentCountryName"></span></th>
+                <tr>
+                  <td class="centered"><img src="libs/images/total-cases.png"></td>
+                  <td class="bold">Total confirmed</td>
+                  <td><span id="currentConfirmed"></span></td>
+                </tr>
+                <tr>
+                  <td class="centered"><img src="libs/images/deaths.png"></td>
+                  <td class="bold">Deaths</td>
+                  <td><span id="currentDeaths"></span></td>
+                </tr>
+                <tr>
+                  <td class="centered"><img src="libs/images/recoveries.png"></td>
+                  <td class="bold">Recovered</td>
+                  <td><span id="currentRecovered"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map  -->
+
+    <div id="mapid"></div>
+
+    <!-- jQuery, Bootstrap, Font Awesome, Leaflet + EasyButton JS -->
+
+    <script type="application/javascript" src="libs/js/jquery-2.2.3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <script type="application/javascript" src="libs/js/script.js"></script>
+  </body>
+</html>
