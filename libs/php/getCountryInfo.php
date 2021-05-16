@@ -82,7 +82,7 @@
 
     // openexchange routine
 
-    $openExchangeUrl = 'https://api.exchangeratesapi.io/latest?base=' . $restCountries['currencies'][0]['code'];
+    $openExchangeUrl = 'https://v6.exchangerate-api.com/v6/6b09980e86a88a612f27cfb2/latest/' . $restCountries['currencies'][0]['code'];
 
     $openExchangech = curl_init();
     curl_setopt($openExchangech, CURLOPT_SSL_VERIFYPEER, false);

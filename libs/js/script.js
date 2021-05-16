@@ -87,7 +87,6 @@ $(document).ready(() => {
 				lng: longitude
 			},
 			success: function (result) {
-				console.log(result);
 				if (result.status.name == "ok") {
 					$('#selectCountry').val(result['data']['openCage']['results'][0]['components']['ISO_3166-1_alpha-3']).change();
 					$currentLocationMarker.on('click', () => {
@@ -151,7 +150,6 @@ $.ajax({
 	type: 'POST',
 	dataType: 'json',
 	success: function (result) {
-		console.log(result);
 		$.each(result.data, i => {
 			$('#selectCountry').append($("<option>", {
 				text: result.data[i].name,
@@ -168,13 +166,12 @@ $.ajax({
 
 // get country borders, data and populate country information modals
 $clickedMarker = null;
-$("select").on('change', () => {
+$("#selectCountry").on('change', () => {
 	$.ajax({
 		url: "libs/php/getCountry.php",
 		type: "POST",
 		dataType: "json",
 		success: function (result) {
-			console.log(result);
 			if ($layers) {
 				$layers.clearLayers();
 			}
@@ -203,9 +200,6 @@ $("select").on('change', () => {
 			countryCode: $('#selectCountry').val()
 		},
 		success: function (result) {
-
-			console.log(result);
-
 			if (result.status.name == "ok") {
 				if (result['data']['covid']['data'][0] === undefined) {
 					$covidButton.disable();
@@ -260,7 +254,7 @@ $("select").on('change', () => {
 				$('#imageGallery8').attr('src', result['data']['pixabay']['hits'][7]['webformatURL']);
 				$('#imageGallery9').attr('src', result['data']['pixabay']['hits'][8]['webformatURL']);
 
-				$rates = result['data']['openExchange']['rates'];
+				$rates = result['data']['openExchange']['conversion_rates'];
 
 				$currencyButton.enable();
 
@@ -273,7 +267,7 @@ $("select").on('change', () => {
 					$(".loader").fadeOut("slow");
 				};
 
-				$('#baseCurrency').html(result['data']['openExchange']['base']);
+				$('#baseCurrency').html(result['data']['openExchange']['base_code']);
 
 				$.each($rates, function (base, rate) {
 					$('<option>', {
@@ -319,7 +313,6 @@ $("select").on('change', () => {
 				});
 
 				// add top 10 cities onto map
-				console.log(locationList);
 				for (var i = 0; i < locationList.length; i++) {
 					$cityMarker = L.marker(new L.latLng([locationList[i]['lat'], locationList[i]['lng']]), {
 							icon: mapIcon
@@ -341,9 +334,6 @@ $("select").on('change', () => {
 								lng: marker.getLatLng().lng
 							},
 							success: function (result) {
-
-								console.log(result);
-
 								$weatherButton.enable();
 								$wikiButton.enable();
 								$('#weather').modal('show');
