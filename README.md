@@ -26,6 +26,6 @@ OpenWeather\
 GeoNames\
 Open Exchange Rates\
 Pixabay\
-TrackCorona\
+Rapid API - COVID-19 data\
 News API\
 OpenCage
