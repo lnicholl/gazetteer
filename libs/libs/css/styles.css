@@ -1,0 +1,92 @@
+.loader {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  background: url('../images/loader.gif') 50% 50% no-repeat rgb(249,249,249, 0.5);
+}
+
+nav {
+  top: 0;
+  position: relative;
+}
+
+.navbar-brand {
+  letter-spacing: 0.1em;
+  font-weight: bold;
+  margin-left: 1em;
+  font-family: 'Roboto', sans-serif;
+}
+
+select {
+  margin-right: 1vh;
+  background-color: #f8f9fa;
+  padding: 5px;
+  font-family: 'Roboto', sans-serif;
+  border: 1px solid #6c757d;
+  border-radius: 1em;
+}
+
+#mapid {
+  top: 8vh;
+  height: 92vh;
+  width: 100%;
+  position: relative;
+}
+
+.modal {
+  margin: 0 auto;
+  padding-top: 60px;
+  position: relative;
+  width: 160px;
+  font-family: 'Roboto', sans-serif;
+  border: 1px solid #6c757d;
+  border-radius: 1em;
+}
+
+.modal button {
+  background: #fff;
+  border: 0;
+}
+
+h5.modal-title {
+  margin: auto;
+  font-weight: bold;
+}
+
+td {
+  vertical-align: middle;
+}
+
+.leaflet-popup-content {
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+}
+
+.easy-button-button.disabled {
+  display: none;
+}
+
+.centered {
+  vertical-align: middle;
+  text-align: center;
+}
+
+img {
+  max-width: 100%;
+}
+
+.centered img {
+  display: block;
+  margin: 0 auto;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+a:hover, a:visited, a:link, a:active {
+  text-decoration: none;
+}
